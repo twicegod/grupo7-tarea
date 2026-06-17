@@ -39,6 +39,8 @@ export default function Sidebar() {
     router.refresh()
   }
 
+  if (pathname === '/login') return null
+
   return (
     <aside className="w-60 min-h-screen bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0">
       {/* Logo */}
