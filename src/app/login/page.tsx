@@ -46,17 +46,21 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { data, error: signUpError } = await supabase.auth.signUp({ email, password })
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName, phone: phone || null, birth_date: birthDate || null },
+      },
+    })
     if (signUpError) { setError(signUpError.message); setLoading(false); return }
-    if (data.user) {
-      await supabase.from('patients').insert({
-        id: data.user.id,
-        full_name: fullName,
-        phone,
-        birth_date: birthDate || null,
-      })
+    if (!data.user) { setError('Error al crear cuenta. Intenta de nuevo.'); setLoading(false); return }
+
+    if (data.session) {
       router.push('/dashboard')
       router.refresh()
+    } else {
+      setError('Cuenta creada. Revisa tu correo para activarla y luego inicia sesión.')
     }
     setLoading(false)
   }
